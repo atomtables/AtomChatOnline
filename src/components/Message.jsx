@@ -1,8 +1,8 @@
-import { db } from "../firebase/firebase.js";
-import {useState, useEffect} from "react";
+import {db} from "../firebase/firebase.js";
+import {useEffect, useState} from "react";
 import {collection, doc, getDoc} from "firebase/firestore";
 
-export default function Message({ uid, message, timestamp }) {
+export default function Message({uid, message, timestamp, isuser}) {
     const [name, setName] = useState("");
 
     async function getCollection(uid) {
@@ -15,12 +15,15 @@ export default function Message({ uid, message, timestamp }) {
     }
 
     useEffect(() => {
-        getCollection(uid).then(r => void(r)).catch(e => void(e));
+        getCollection(uid).then(r => void (r)).catch(e => void (e));
     })
 
     return (
-        <div className={"bg-amber-950 p-2 rounded-xl text-white m-2"}>
-            {name}: {new Date(timestamp).toLocaleTimeString()}: {message}
-        </div>
+        <>
+            <div className={`bg-amber-950 p-2 rounded-xl w-max relative text-white m-2 ${isuser ? "ml-auto" : ""}`}>
+                {name}: {new Date(timestamp).toLocaleTimeString()}: {message}
+            </div>
+        </>
     )
+
 }
