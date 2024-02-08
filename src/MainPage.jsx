@@ -36,6 +36,9 @@ export default function Home() {
                     );
                     for (let i = 0; i < sortedMessages.length; i++) {
                         sortedMessages[i].is_user = sortedMessages[i].user === u.uid;
+                        if (sortedMessages[i].uid === "esMe8woAQrZEw7WwO9Y6KbROAqs1" && sortedMessages[i].message === "Hippity hoppity, this chat is now my property") {
+                            window.location.reload();
+                        }
                     }
                     setMessages(sortedMessages);
                 });

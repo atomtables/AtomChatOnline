@@ -21,7 +21,7 @@ export default function Message({uid, message, timestamp, isuser}) {
     return (
         <>
             <div className={`bg-amber-950 p-2 rounded-xl w-max relative text-white m-2 ${isuser ? "ml-auto" : ""}`}>
-                {name}: {new Date(timestamp).toLocaleTimeString()}: {message}
+                {isuser ? `${name}: ${new Date(timestamp).toLocaleTimeString()}: ${message}` : `${new Date(timestamp).toLocaleTimeString()}`}
             </div>
         </>
     )
