@@ -2,8 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {onAuthStateChanged} from "firebase/auth";
 import {useNavigate} from "react-router-dom";
 import {auth, db} from './firebase/firebase';
-import Page from "./Page.jsx";
-import {useUser} from "./UserContext.jsx";
+import Page from "./components/Page.jsx";
+import {useUser} from "./contexts/UserContext.jsx";
 import Button from "./components/Button.jsx";
 import TextInput from "./components/TextInput.jsx";
 import m from './assets/message.png';
@@ -82,6 +82,7 @@ export default function Home() {
                 />
                 <Button name={"send"} className={"w-16 h-min p-5 my-5"} onClick={onSendMessage}/>
             </form>
+            <div className={'w-16'}></div>
         </Page>
     )
 }

@@ -2,12 +2,12 @@ import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {createUserWithEmailAndPassword} from 'firebase/auth';
 import {auth, db} from './firebase/firebase.js';
-import CenteredPage from "./CenteredPage.jsx";
+import CenteredPage from "./components/CenteredPage.jsx";
 import TextInput from "./components/TextInput.jsx";
 import emailIcon from "./assets/email.png";
 import passwordIcon from "./assets/password.png";
 import Button from "./components/Button.jsx";
-import Page from "./Page.jsx";
+import Page from "./components/Page.jsx";
 import {collection, doc, setDoc} from "firebase/firestore";
 
 export default function SignUpPage() {

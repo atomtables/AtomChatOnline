@@ -2,13 +2,13 @@ import React, {useState} from 'react';
 import {signInWithEmailAndPassword} from 'firebase/auth';
 import {auth} from './firebase/firebase';
 import {NavLink, useNavigate} from 'react-router-dom'
-import Page from "./Page.jsx";
-import {useUser} from "./UserContext.jsx";
+import Page from "./components/Page.jsx";
+import {useUser} from "./contexts/UserContext.jsx";
 import emailIcon from "./assets/email.png"
 import passwordIcon from "./assets/password.png"
 import TextInput from "./components/TextInput.jsx";
 import Button from "./components/Button.jsx";
-import CenteredPage from "./CenteredPage.jsx";
+import CenteredPage from "./components/CenteredPage.jsx";
 
 export default function SignInPage() {
     const navigate = useNavigate();

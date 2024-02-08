@@ -1,8 +1,8 @@
 import Header from "./Header.jsx";
 import {useEffect, useState} from "react";
 import {onAuthStateChanged} from "firebase/auth";
-import {auth} from "./firebase/firebase.js";
-import {useUser} from "./UserContext.jsx";
+import {auth} from "../firebase/firebase.js";
+import {useUser} from "../contexts/UserContext.jsx";
 
 export default function Page({children}) {
     const { user, setUser } = useUser();

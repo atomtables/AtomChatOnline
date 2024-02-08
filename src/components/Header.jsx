@@ -1,8 +1,8 @@
 import {NavLink, useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
-import {useUser} from './UserContext';
+import {useUser} from '../contexts/UserContext.jsx';
 import {onAuthStateChanged, signOut} from "firebase/auth";
-import {auth, db} from "./firebase/firebase.js";
+import {auth, db} from "../firebase/firebase.js";
 import {collection, doc, getDoc} from "firebase/firestore";
 
 export default function Header() {
@@ -50,7 +50,7 @@ export default function Header() {
         content = (
             <div className={"flex space-evenly space-x-3"}>
                 <div className={""}><NavLink to="/login">Login</NavLink></div>
-                <div className={""}>Sign Up</div>
+                <div className={""}><NavLink to={'/signup'}>Sign Up</NavLink></div>
             </div>
         )
     }
