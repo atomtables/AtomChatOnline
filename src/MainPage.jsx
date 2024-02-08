@@ -80,9 +80,10 @@ export default function Home() {
                     textInputHandler={(e) => setMessage(e.target.value)}
                     icon={m}
                 />
-                <Button name={"send"} className={"w-16 h-min p-5 my-5"} onClick={onSendMessage}/>
+                <div className={'w-16'}>
+                    <Button name={"send"} className={" h-min p-5 my-5"} onClick={onSendMessage}/>
+                </div>
             </form>
-            <div className={'w-16'}></div>
         </Page>
     )
 }
