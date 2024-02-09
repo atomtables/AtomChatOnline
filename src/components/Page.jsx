@@ -19,7 +19,7 @@ export default function Page({children}) {
         <>
             <Header user={user}/>
             <div className={"h-[calc(100%-76px)]"}>
-                <div className={"max-w-6xl mx-auto h-full"}>
+                <div className={"w-full mx-auto h-full"}>
                     {children}
                 </div>
             </div>
