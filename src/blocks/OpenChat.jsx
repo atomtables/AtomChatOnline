@@ -1,6 +1,6 @@
-import Message from "./Message.jsx";
-import TextInput from "./TextInput.jsx";
-import Button from "./Button.jsx";
+import Message from "../components/Message.jsx";
+import TextInput from "../components/TextInput.jsx";
+import Button from "../components/Button.jsx";
 import React, {useEffect, useRef, useState} from "react";
 import {addDoc, collection, doc, limit, onSnapshot, orderBy, query} from "firebase/firestore";
 import {auth, db} from "../functions/firebase.js";

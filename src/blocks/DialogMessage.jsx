@@ -1,7 +1,7 @@
 import {Fragment, useEffect, useRef, useState} from 'react'
 import {Dialog, Transition} from '@headlessui/react'
-import Button from "./Button.jsx";
-import TextInput from "./TextInput.jsx";
+import Button from "../components/Button.jsx";
+import TextInput from "../components/TextInput.jsx";
 import EmailIcon from "../assets/email.png";
 import {collection, doc, getDocs, setDoc} from "firebase/firestore";
 import {auth, db} from "../functions/firebase.js";

@@ -1,15 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {onAuthStateChanged} from "firebase/auth";
 import {auth, db} from './functions/firebase';
-import Page from "./components/Page.jsx";
+import Page from "./templates/Page.jsx";
 import {useUser} from "./contexts/UserContext.jsx";
 import create_chat from './assets/create_chat.png';
 import {collection, doc, getDocs} from "firebase/firestore";
 import OpenChatButton from "./components/OpenChatButton.jsx";
-import CenteredPage from "./components/CenteredPage.jsx";
-import OpenChat from "./components/OpenChat.jsx";
+import CenteredPage from "./templates/CenteredPage.jsx";
+import OpenChat from "./blocks/OpenChat.jsx";
 import combineAndHash from "./functions/hash.js";
-import DialogMessage from "./components/DialogMessage.jsx";
+import DialogMessage from "./blocks/DialogMessage.jsx";
 import {useNavigate} from "react-router-dom";
 
 export default function Home() {

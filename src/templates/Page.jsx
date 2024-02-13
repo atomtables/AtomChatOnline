@@ -1,4 +1,4 @@
-import Header from "./Header.jsx";
+import Header from "../blocks/Header.jsx";
 import {useEffect, useState} from "react";
 import {onAuthStateChanged} from "firebase/auth";
 import {auth} from "../functions/firebase.js";
