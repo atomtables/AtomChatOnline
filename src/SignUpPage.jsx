@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {createUserWithEmailAndPassword} from 'firebase/auth';
-import {auth, db} from './firebase/firebase.js';
+import {auth, db} from './functions/firebase.js';
 import CenteredPage from "./components/CenteredPage.jsx";
 import TextInput from "./components/TextInput.jsx";
 import emailIcon from "./assets/email.png";
@@ -20,6 +20,7 @@ export default function SignUpPage() {
     const [lastName, setLastName] = useState('');
 
     async function onCreate(e) {
+        console.log("Write was made")
         e.preventDefault()
         await createUserWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
@@ -27,7 +28,8 @@ export default function SignUpPage() {
                 const userdataref = collection(db, 'userdata');
                 setDoc(doc(userdataref, user.uid), {
                     firstName: firstName,
-                    lastName: lastName
+                    lastName: lastName,
+                    email: email
                 })
                 console.log(user);
                 navigate("/login")
@@ -65,7 +67,7 @@ export default function SignUpPage() {
                         </div>
                         <div className={"flex justify-between"}>
                             <Button onClick={onCreate} name="Sign Up" className={"basis-3/4"} bgColor={"amber-950"}/>
-                            <Button onClick={() => navigate("/login")} name="Login" className={"basis-1/4"}/>
+                            <Button onClick={() => navigate("/login")} name="Or Login" className={"basis-1/4"}/>
                         </div>
                     </form>
                 </div>

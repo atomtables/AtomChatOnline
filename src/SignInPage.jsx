@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {signInWithEmailAndPassword} from 'firebase/auth';
-import {auth} from './firebase/firebase';
+import {auth} from './functions/firebase';
 import {NavLink, useNavigate} from 'react-router-dom'
 import Page from "./components/Page.jsx";
 import {useUser} from "./contexts/UserContext.jsx";
@@ -17,6 +17,7 @@ export default function SignInPage() {
     const {user, setUser} = useUser();
 
     const onLogin = (e) => {
+        console.log("Login attempted")
         e.preventDefault();
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
@@ -61,8 +62,8 @@ export default function SignInPage() {
                         <TextInput icon={passwordIcon} textInputHandler={(e) => setPassword(e.target.value)}
                                    type={"password"} name={"password1"} placeholder={"Password"} value={password}/>
                         <div className={"flex justify-between"}>
-                            <Button onClick={onLogin} name="Sign In" className={"basis-3/4"} bgColor={"amber-950"}/>
-                            <Button onClick={() => navigate("/signup")} name="Sign Up" className={"basis-1/4"}/>
+                            <Button onClick={onLogin} name="Sign In" className={"basis-3/4"}/>
+                            <Button onClick={() => navigate("/signup")} name="Or Sign Up" className={"basis-1/4"}/>
                         </div>
                     </form>
                 </div>

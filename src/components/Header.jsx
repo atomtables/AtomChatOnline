@@ -1,33 +1,44 @@
 import {NavLink, useNavigate} from "react-router-dom";
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {useUser} from '../contexts/UserContext.jsx';
 import {onAuthStateChanged, signOut} from "firebase/auth";
-import {auth, db} from "../firebase/firebase.js";
+import {auth, db} from "../functions/firebase.js";
 import {collection, doc, getDoc} from "firebase/firestore";
+import {useNames} from "../contexts/NamesContext.jsx";
 
 export default function Header() {
     const navigate = useNavigate();
-    const {user, setUser} = useUser();
-    let [name, setName] = useState(null);
+    const {user, setUser, firstName, setFirstName, lastName, setLastName} = useUser();
+    const {names, setNames} = useNames();
 
-
-    useEffect(() => {
-        onAuthStateChanged(auth, (u) => {
-            if (user && !name) {
-                getCollection(u).then(r => void(r)).catch(e => void(e))
-            }
-        });
-    }, [getCollection])
-
-    async function getCollection(u) {
-        const uid = u.uid;
+    async function getCollection(uid) {
+        console.log("Read was made")
         const userdata = collection(db, 'userdata')
         const userdoc = doc(userdata, uid)
         const usersnap = await getDoc(userdoc);
         if (usersnap.exists()) {
-            setName(`${usersnap.data().firstName} ${usersnap.data().lastName}`);
+            setFirstName(`${usersnap.data().firstName}`);
+            setLastName(`${usersnap.data().lastName}`);
+            setNames([...names, {
+                uid: uid,
+                firstName: usersnap.data().firstName,
+                lastName: usersnap.data().lastName
+            }])
         }
     }
+
+    useEffect(() => {
+        onAuthStateChanged(auth, (u) => {
+            for (const name of names) {
+                if (name.uid === u.uid) {
+                    setFirstName(`${name.firstName}`);
+                    setLastName(`${name.lastName}`);
+                    return;
+                }
+            }
+            getCollection(u.uid).then(r => void (r)).catch(e => void (e));
+        });
+    }, [])
 
     function onSignOut() {
         signOut(auth)
@@ -42,7 +53,9 @@ export default function Header() {
     if (user != null) {
         content = (
             <div className={"flex"}>
-                <button className={"a pointer-events-none"}>{name ? name : user.email}: </button>
+                <button
+                    className={"a pointer-events-none"}>{firstName && lastName ? `${firstName} ${lastName}` : user.email}:
+                </button>
                 <button className={"pl-2 cursor-pointer text-red-200"} onClick={onSignOut}>Logout</button>
             </div>
         )
@@ -56,7 +69,8 @@ export default function Header() {
     }
     return (
         <>
-            <div className={"bg-gradient-to-r from-green-950 to-cyan-950 p-5 flex justify-between"}>
+            <div
+                className={"bg-gradient-to-r from-green-950 to-cyan-950 p-2 flex justify-between border-gray-500 border-b-2"}>
                 <div className={"text-2xl"}>AtomChat Online</div>
                 {content}
             </div>

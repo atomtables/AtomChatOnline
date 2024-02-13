@@ -1,13 +1,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
-import '../public/index.css'
 import {UserProvider} from "./contexts/UserContext.jsx";
+import {NamesProvider} from "./contexts/NamesContext.jsx";
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <UserProvider>
-        <App />
+        <NamesProvider>
+            <App />
+        </NamesProvider>
     </UserProvider>
   </React.StrictMode>,
 )

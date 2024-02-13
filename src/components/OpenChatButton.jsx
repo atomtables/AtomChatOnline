@@ -1,20 +1,20 @@
-import {db} from "../functions/firebase.js";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {collection, doc, getDoc} from "firebase/firestore";
+import {db} from "../functions/firebase.js";
 import {useNames} from "../contexts/NamesContext.jsx";
 
-export default function Message({uid, message, timestamp, isuser}) {
+export default function OpenChatButton({ user, chat, selectedChat, setId }) {
     const [name, setName] = useState("");
     const {names, setNames} = useNames();
 
     useEffect(() => {
         for (const name of names) {
-            if (name.uid === uid) {
+            if (name.uid === user) {
                 setName(`${name.firstName} ${name.lastName}`);
                 return;
             }
         }
-        getCollection(uid).then(r => void (r)).catch(e => void (e));
+        getCollection(user).then(r => void (r)).catch(e => void (e));
     }, [names])
 
     async function getCollection(uid) {
@@ -33,11 +33,8 @@ export default function Message({uid, message, timestamp, isuser}) {
     }
 
     return (
-        <>
-            <div className={`bg-amber-950 p-2 rounded-xl w-max relative text-white m-2 ${isuser ? "ml-auto" : ""}`}>
-                {`${name}: ${new Date(timestamp).toLocaleTimeString()}: ${message}`}
-            </div>
-        </>
+        <div className={`p-3 m-2 rounded-3xl ${selectedChat === chat ? "bg-blue-900" : "bg-blue-950"} cursor-pointer hover:bg-blue-800 transition-all ease-in-out duration-300`} onClick={() => setId(chat)}>
+            {name}
+        </div>
     )
-
 }

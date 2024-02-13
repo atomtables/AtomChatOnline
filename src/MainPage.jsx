@@ -1,15 +1,16 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {onAuthStateChanged} from "firebase/auth";
-import {useNavigate} from "react-router-dom";
-import {auth, db} from './firebase/firebase';
+import {auth, db} from './functions/firebase';
 import Page from "./components/Page.jsx";
 import {useUser} from "./contexts/UserContext.jsx";
-import Button from "./components/Button.jsx";
-import TextInput from "./components/TextInput.jsx";
-import m from './assets/message.png';
 import create_chat from './assets/create_chat.png';
-import {addDoc, collection, doc, getDoc, getDocs, limit, onSnapshot, orderBy, query} from "firebase/firestore";
-import Message from "./components/Message.jsx";
+import {collection, doc, getDocs} from "firebase/firestore";
+import OpenChatButton from "./components/OpenChatButton.jsx";
+import CenteredPage from "./components/CenteredPage.jsx";
+import OpenChat from "./components/OpenChat.jsx";
+import combineAndHash from "./functions/hash.js";
+import DialogMessage from "./components/DialogMessage.jsx";
+import {useNavigate} from "react-router-dom";
 
 export default function Home() {
     const {user, setUser} = useUser();
@@ -17,159 +18,69 @@ export default function Home() {
     const [messages, setMessages] = useState([]);
     const [openChats, setOpenChats] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
-    const scroll = useRef();
+    const [openChat, setOpenChat] = useState(false);
+    const [display, setDisplay] = useState(false);
     const navigate = useNavigate();
 
-    async function handleSearch(e) {
-        e.preventDefault()
-        try {
-            const q = query(
-                collection(db, 'userdata')
-            )
-            const querySnapshot = await onSnapshot(q, (QuerySnapshot) => {
-                const fetchedMessages = [];
-                QuerySnapshot.forEach((doc) => {
-                    fetchedMessages.push({...doc.data(), id: doc.id});
-                });
-                for (let i = 0; i < fetchedMessages.length; i++) {
-                    if (fetchedMessages[i].firstName.includes(message) || fetchedMessages[i].lastName.includes(message)) {
-                        console.log(fetchedMessages[i])
-                    }
-                }
-                setSearchResults(fetchedMessages);
-                console.log(fetchedMessages)
-            });
-        } catch (error) {
-            console.error('Error searching for users:', error);
-        }
+    async function getCollection(u) {
+        console.log("Read was made")
+        const uid = u.uid;
+        const userdata = collection(db, 'userdata')
+        const userdoc = doc(userdata, uid)
+        const chatdata = collection(userdoc, 'open_chats')
+
+        getDocs(chatdata).then(async (chatsnap) => {
+            let openchats = []
+            for (let i = 0; i < chatsnap.docs.length; i++) {
+                const chat = chatsnap.docs[i].data();
+                openchats = [...openchats, {id: chatsnap.docs[i].id, user: chat.user, chat: await combineAndHash(uid, chat.user)}]
+            }
+            setOpenChats(openchats);
+        });
     }
 
     useEffect(() => {
         onAuthStateChanged(auth, (u) => {
             if (u) {
                 setUser(u)
-                const q = query(
-                    collection(db, "messages"),
-                    orderBy("timestamp", "desc"),
-                    limit(50)
-                );
-                const unsubscribe = onSnapshot(q, (QuerySnapshot) => {
-                    const fetchedMessages = [];
-                    QuerySnapshot.forEach((doc) => {
-                        fetchedMessages.push({...doc.data(), id: doc.id});
-                    });
-                    const sortedMessages = fetchedMessages.sort(
-                        (a, b) => a.timestamp - b.timestamp
-                    );
-                    for (let i = 0; i < sortedMessages.length; i++) {
-                        sortedMessages[i].is_user = sortedMessages[i].user === u.uid;
-                    }
-                    setMessages(sortedMessages);
-                });
-                return () => unsubscribe;
+                getCollection(u).then(r => void (r)).catch(e => alert(e));
             } else {
                 setUser(null)
+                navigate('/login')
             }
         });
     }, [])
 
-    async function getCollection(u) {
-        const uid = u.uid;
-        const userdata = collection(db, 'userdata')
-        const userdoc = doc(userdata, uid)
-        const chatdata = collection(userdoc, 'open_chats')
-        const chatsnap = await getDocs(chatdata);
-        let openchats = []
-        chatsnap.forEach((d) => {
-            const usersnap = getUsersnap(d, userdata).data()
-            openchats.push({firstName: usersnap.get("firstName"), lastName: usersnap.get("lastName"), id: d.id});
-        });
-        setOpenChats(openchats);
-        console.log(openchats)
+    function setdisplay(changeOccured) {
+        setDisplay(false)
+        if (changeOccured) getCollection(user).then(r => void (r)).catch(e => alert(e));
     }
 
-    async function getUsersnap(d, userdata) {
-        const userdoc = doc(userdata, d.data().user)
-        return await getDoc(userdoc)
-    }
-
-    useEffect(() => {
-        onAuthStateChanged(auth, (u) => {
-            if (u) {
-                getCollection(u).then(r => void (r)).catch(e => void (e));
-            } else {
-                setUser(null)
-            }
-        });
-    }, [])
-
-    useEffect(() => {
-        if (messages !== []) {
-            setTimeout(() => scroll.current.scrollIntoView({behavior: "smooth"}), 100)
-        }
-    }, [messages])
-
-    async function onSendMessage(e) {
-        e.preventDefault()
-
-        if (message.trim() === "") {
-            alert("Enter valid message");
-            return;
-        }
-
-        const timestamp = Date.now();
-        const m = {
-            timestamp: timestamp,
-            message: message,
-            user: user.uid
-        }
-        await addDoc(collection(db, "messages"), m);
-        setMessage("");
-        scroll.current.scrollIntoView({behavior: "smooth"});
-    }
-
+    // noinspection JSValidateTypes
     return (
         <Page>
-            <div className={"flex"}>
-                <div className={"w-96"}>
-                    <div className={"m-5 p-3 rounded-2xl bg-blue-950"}>
+            {display ? <DialogMessage onResponded={setdisplay}/> : null}
+            <div className={"flex align-middle justify-center flex-nowrap  h-full"}>
+                <div className={"2xl:w-1/6 xl:w-1/5 lg:w-1/4 md:w-1/3 sm:w-1/2 border-gray-500 border-r-2 h-full"}>
+                    <div className={"m-5 p-3 rounded-2xl bg-blue-950 hover:bg-blue-800 transition-all ease-in-out duration-300 cursor-pointer"} onClick={() => setDisplay(true)}>
                         <img src={create_chat} alt={"Create Chat"} className={"object-cover h-[1.5rem] inline mr-2"}/>
                         Create Chat
                     </div>
-                    <div className={"p-3 bg-blue-950"}>
-                        {
-                            openChats.map((chat) => (
-                                <div key={chat.id} className={"p-5bg-blue-950"}>
-                                    {chat.firstName} {chat.lastName} {chat.id}
-                                </div>
-                            ))
-                        }
-                    </div>
+                    {
+                        openChats.map((chat) => (
+                            <OpenChatButton key={chat.id} user={chat.user} chat={chat.chat} setId={setOpenChat} selectedChat={openChat}/>
+                        ))
+                    }
                 </div>
-                <div className={"w-full"}>
-                    <ul id="messages" className="block list-none p-0 m-0 overflow-y-auto h-full">
-                        {messages?.map((message) => (
-                            <Message key={message.timestamp} uid={message.user} message={message.message}
-                                     timestamp={message.timestamp} isuser={message.is_user}/>
-                        ))}
-                        <div className={"mb-[80px]"}/>
-                        <span ref={scroll}></span>
-                    </ul>
-                    <form id="form"
-                          className={"flex align-middle justify-between fixed bottom-0 left-0 right-0 bg-gray-950"}>
-                        <TextInput
-                            name="messageInput"
-                            className="bg-dark color-dark"
-                            placeholder="Send a message..."
-                            type="text"
-                            value={message}
-                            textInputHandler={(e) => setMessage(e.target.value)}
-                            icon={m}
-                        />
-                        <div className={'w-16'}>
-                            <Button name={"send"} className={"h-min mr-5 my-5"} onClick={onSendMessage}/>
-                        </div>
-                    </form>
+                <div className={"2xl:w-5/6 xl:w-4/5 lg:w-3/4 md:w-2/3 sm:w-1/2"}>
+                    {openChat ? (<>
+                        <OpenChat chat={openChat}/>
+                    </>) : (<>
+                        <CenteredPage>
+                            <h1 className={"text-3xl font-bold text-center"}>Open a chat!</h1>
+                            <div className={"text-lg text-center"}>or create a new one!</div>
+                        </CenteredPage>
+                    </>)}
                 </div>
             </div>
         </Page>

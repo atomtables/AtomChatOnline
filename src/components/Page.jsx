@@ -1,7 +1,7 @@
 import Header from "./Header.jsx";
 import {useEffect, useState} from "react";
 import {onAuthStateChanged} from "firebase/auth";
-import {auth} from "../firebase/firebase.js";
+import {auth} from "../functions/firebase.js";
 import {useUser} from "../contexts/UserContext.jsx";
 
 export default function Page({children}) {
@@ -18,7 +18,7 @@ export default function Page({children}) {
     return (
         <>
             <Header user={user}/>
-            <div className={"h-[calc(100%-76px)]"}>
+            <div className={"h-[calc(100%-50px)]"}>
                 <div className={"w-full mx-auto h-full"}>
                     {children}
                 </div>
