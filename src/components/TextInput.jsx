@@ -7,7 +7,7 @@ export default function TextInput({ icon, textInputHandler, name, type, placehol
                 <div className={"inline-block bg-blue-950 pl-2 pr-1 py-2 rounded-l-[100%]"}>
                     <img src={icon} alt={""} className={"object-cover h-[1.5rem]"}/>
                 </div>
-                <input className={"p-1 pl-2 w-full rounded-r-xl"} id={name} name={name} type={type} placeholder={placeholder} value={value}
+                <input className={"p-1 pl-2 w-full rounded-r-xl bg-gray-900"} id={name} name={name} type={type} placeholder={placeholder} value={value}
                        onChange={textInputHandler}/>
             </div>
         </>
