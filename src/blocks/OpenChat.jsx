@@ -8,6 +8,7 @@ import {useUser} from "../contexts/UserContext.jsx";
 import {onAuthStateChanged} from "firebase/auth";
 import m from "../assets/message.png";
 import DialogMessage from "./DialogMessage.jsx";
+import firebase from "firebase/compat";
 
 export default function OpenChat({ chat }) {
     const {user, setUser, firstName, setFirstName, lastName, setLastName} = useUser();
@@ -63,11 +64,9 @@ export default function OpenChat({ chat }) {
 
         const timestamp = Date.now();
         const m = {
-            timestamp: timestamp,
+            timestamp: firebase.database.ServerValue.TIMESTAMP,
             message: message,
-            user: user.uid,
-            first_name: firstName,
-            last_name: lastName
+            user: user.uid
         }
         await addDoc(collection(doc(collection(db, "messages"), chat), "messages"), m);
         setMessage("");
