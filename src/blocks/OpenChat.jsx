@@ -3,12 +3,11 @@ import TextInput from "../components/TextInput.jsx";
 import Button from "../components/Button.jsx";
 import React, {useEffect, useRef, useState} from "react";
 import {addDoc, collection, doc, limit, onSnapshot, orderBy, query} from "firebase/firestore";
-import {auth, db} from "../functions/firebase.js";
+import {auth, db, serverStamp} from "../functions/firebase.js";
 import {useUser} from "../contexts/UserContext.jsx";
 import {onAuthStateChanged} from "firebase/auth";
 import m from "../assets/message.png";
 import DialogMessage from "./DialogMessage.jsx";
-import firebase from "firebase/compat";
 
 export default function OpenChat({ chat }) {
     const {user, setUser, firstName, setFirstName, lastName, setLastName} = useUser();
@@ -17,6 +16,7 @@ export default function OpenChat({ chat }) {
     const scroll = useRef();
 
     useEffect(() => {
+        // alert("rerender occured")
         onAuthStateChanged(auth, (u) => {
             if (u) {
                 setUser(u)
@@ -64,7 +64,7 @@ export default function OpenChat({ chat }) {
 
         const timestamp = Date.now();
         const m = {
-            timestamp: firebase.database.ServerValue.TIMESTAMP,
+            timestamp: serverStamp.now(),
             message: message,
             user: user.uid
         }

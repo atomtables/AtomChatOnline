@@ -14,11 +14,10 @@ import {useNavigate} from "react-router-dom";
 
 export default function Home() {
     const {user, setUser} = useUser();
-    const [message, setMessage] = useState("")
-    const [messages, setMessages] = useState([]);
     const [openChats, setOpenChats] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
     const [openChat, setOpenChat] = useState(false);
+    const [reOpenChat, setReOpenChat] = useState(true);
     const [display, setDisplay] = useState(false);
     const navigate = useNavigate();
 
@@ -51,9 +50,21 @@ export default function Home() {
         });
     }, [])
 
+    useEffect(() => {
+        if (!reOpenChat) {
+            setReOpenChat(true)
+        }
+    }, [reOpenChat])
+
     function setdisplay(changeOccured) {
         setDisplay(false)
         if (changeOccured) getCollection(user).then(r => void (r)).catch(e => alert(e));
+    }
+
+    function setopenchat(chat) {
+        // alert(`Set open chat from ${openChat} to ${chat}`)
+        setOpenChat(chat)
+        setReOpenChat(false)
     }
 
     // noinspection JSValidateTypes
@@ -68,14 +79,14 @@ export default function Home() {
                     </div>
                     {
                         openChats.map((chat) => (
-                            <OpenChatButton key={chat.id} user={chat.user} chat={chat.chat} setId={setOpenChat} selectedChat={openChat}/>
+                            <OpenChatButton key={chat.id} user={chat.user} chat={chat.chat} setId={setopenchat} selectedChat={openChat}/>
                         ))
                     }
                 </div>
                 <div className={"2xl:w-5/6 xl:w-4/5 lg:w-3/4 md:w-2/3 sm:w-1/2"}>
-                    {openChat ? (<>
+                    {openChat ? (reOpenChat ? (<>
                         <OpenChat chat={openChat}/>
-                    </>) : (<>
+                    </>) : null) : (<>
                         <CenteredPage>
                             <h1 className={"text-3xl font-bold text-center"}>Open a chat!</h1>
                             <div className={"text-lg text-center"}>or create a new one!</div>

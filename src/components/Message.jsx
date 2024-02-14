@@ -1,6 +1,6 @@
 import {db} from "../functions/firebase.js";
 import {useEffect, useState} from "react";
-import {collection, doc, getDoc} from "firebase/firestore";
+import {collection, doc, getDoc, Timestamp} from "firebase/firestore";
 import {useNames} from "../contexts/NamesContext.jsx";
 
 export default function Message({uid, message, timestamp, isuser}) {
@@ -35,7 +35,7 @@ export default function Message({uid, message, timestamp, isuser}) {
     return (
         <>
             <div className={`bg-amber-950 p-2 rounded-xl w-max relative text-white m-2 ${isuser ? "ml-auto" : ""}`}>
-                {`${name}: ${new Date(timestamp).toLocaleTimeString()}: ${message}`}
+                {`${name}: ${new Date(new Timestamp(timestamp.seconds, timestamp.nanoseconds).toDate()).toLocaleTimeString()}: ${message}`}
             </div>
         </>
     )
